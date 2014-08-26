@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ -n "$PLUSHU_TRACE" ]] && set -x
+
+mkdir -p "$PLUSHU_ROOT/nginx/http"
+mkdir -p "$PLUSHU_ROOT/ssl"
+
+# If there's no pre-existing nginx.conf
+if [[ ! -f "$PLUSHU_ROOT/nginx/nginx.conf" ]]; then
+  # Make a basic conf with the Plushu http block
+  printf '%s\n' "http { include http/*.conf; }" \
+    > "$PLUSHU_ROOT/nginx/nginx.conf"
+fi
+
+if [[ "$EUID" == 0 ]]; then
+  chown -R plushu "$PLUSHU_ROOT/nginx/http"
+  chown -R plushu "$PLUSHU_ROOT/ssl"
+fi
+
+docker run --name plushu-nginx --net=host \
+  -v "$PLUSHU_ROOT/nginx:/usr/local/nginx:ro" \
+  -v "$PLUSHU_ROOT/ssl:/usr/local/nginx/ssl:ro" \
+  -d nginx -g 'daemon off;'
