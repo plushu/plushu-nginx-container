@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ -n "$PLUSHU_TRACE" ]] && set -x
+
+docker run --name plushu-nginx --net=host \
+  -v "$PLUSHU_ROOT/nginx:/usr/local/nginx/etc" \
+  -v "$PLUSHU_ROOT/ssl:/usr/local/nginx/etc/ssl" \
+  -d --entrypoint=nginx nginx -c /usr/local/nginx/etc/nginx.conf >/dev/null
