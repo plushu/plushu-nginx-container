@@ -9,12 +9,19 @@ mkdir -p "$PLUSHU_ROOT/ssl"
 
 # If there's no pre-existing nginx.conf
 if [[ ! -f "$PLUSHU_ROOT/nginx/nginx.conf" ]]; then
-  # Make a basic conf with the Plushu http block
+  # Make a basic conf that reads from directories
   cat > "$PLUSHU_ROOT/nginx/nginxl.conf" <<EOF
 include main/*.conf;
 events { include events/*.conf; }
 http { include http/*.conf; }
 mail { include mail/*.conf; }
+EOF
+fi
+
+# Make sure we disable daemonization - docker wants nginx in the foreground
+if [[ ! -f "$PLUSHU_ROOT/nginx/main/daemon-off.conf" ]]; then
+  cat > "$PLUSHU_ROOT/nginx/main/daemon-off.conf" <<EOF
+daemon off;
 EOF
 fi
 
