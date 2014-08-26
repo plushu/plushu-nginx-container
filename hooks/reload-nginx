@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ -n "$PLUSHU_TRACE" ]] && set -x
 
-docker kill -s HUP plushu-nginx
+docker kill -s HUP plushu-nginx >/dev/null
