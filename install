@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 set -eo pipefail; [[ -n "$PLUSHU_TRACE" ]] && set -x
 
+mkdir -p "$PLUSHU_ROOT/nginx/main"
+mkdir -p "$PLUSHU_ROOT/nginx/events"
 mkdir -p "$PLUSHU_ROOT/nginx/http"
+mkdir -p "$PLUSHU_ROOT/nginx/mail"
 mkdir -p "$PLUSHU_ROOT/ssl"
 
 # If there's no pre-existing nginx.conf
 if [[ ! -f "$PLUSHU_ROOT/nginx/nginx.conf" ]]; then
   # Make a basic conf with the Plushu http block
-  printf '%s\n' "http { include http/*.conf; }" \
-    > "$PLUSHU_ROOT/nginx/nginx.conf"
+  cat > "$PLUSHU_ROOT/nginx/nginxl.conf" <<EOF
+include main/*.conf;
+events { include events/*.conf; }
+http { include http/*.conf; }
+mail { include mail/*.conf; }
+EOF
 fi
 
 if [[ "$EUID" == 0 ]]; then
@@ -17,6 +24,6 @@ if [[ "$EUID" == 0 ]]; then
 fi
 
 docker run --name plushu-nginx --net=host \
-  -v "$PLUSHU_ROOT/nginx:/usr/local/nginx:ro" \
-  -v "$PLUSHU_ROOT/ssl:/usr/local/nginx/ssl:ro" \
-  -d nginx -g 'daemon off;'
+  -v "$PLUSHU_ROOT/nginx:/usr/local/nginx/etc" \
+  -v "$PLUSHU_ROOT/ssl:/usr/local/nginx/etc/ssl" \
+  -d --entrypoint=nginx nginx -c /usr/local/nginx/etc/nginx.conf
