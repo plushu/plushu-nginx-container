@@ -10,7 +10,7 @@ mkdir -p "$PLUSHU_ROOT/ssl"
 # If there's no pre-existing nginx.conf
 if [[ ! -f "$PLUSHU_ROOT/nginx/nginx.conf" ]]; then
   # Make a basic conf that reads from directories
-  cat > "$PLUSHU_ROOT/nginx/nginxl.conf" <<EOF
+  cat > "$PLUSHU_ROOT/nginx/nginx.conf" <<EOF
 include main/*.conf;
 events { include events/*.conf; }
 http { include http/*.conf; }
@@ -26,7 +26,7 @@ EOF
 fi
 
 if [[ "$EUID" == 0 ]]; then
-  chown -R plushu "$PLUSHU_ROOT/nginx/http"
+  chown -R plushu "$PLUSHU_ROOT/nginx"
   chown -R plushu "$PLUSHU_ROOT/ssl"
 fi
 
