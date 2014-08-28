@@ -30,6 +30,7 @@ if [[ "$EUID" == 0 ]]; then
   chown -R "$PLUSHU_USER" "$PLUSHU_ROOT/ssl"
 fi
 
+docker rm -f plushu-nginx >/dev/null 2>&1 || :
 docker pull nginx
 docker run --name plushu-nginx --net=host \
   -v "$PLUSHU_ROOT/nginx:/usr/local/nginx/etc" \
