@@ -38,7 +38,7 @@ docker run --name plushu-nginx --net=host \
   -d --entrypoint=nginx nginx -c /usr/local/nginx/etc/nginx.conf >/dev/null
 
 setup_systemd () {
-  cat >/etc/systemd/system/multi-user.target.wants/plushu-deploy-all.service \
+  cat >/etc/systemd/system/multi-user.target.wants/plushu-nginx-container.service \
 <<EOF
 [Unit]
 After=docker.service
@@ -51,7 +51,7 @@ EOF
 }
 
 setup_upstart () {
-  cat >/etc/init/plushu-deploy-all.conf <<EOF
+  cat >/etc/init/plushu-nginx-container.conf <<EOF
 start on filesystem and started docker
 stop on runlevel [!2345]
 setuid $PLUSHU_USER
