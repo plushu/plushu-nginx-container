@@ -26,8 +26,8 @@ EOF
 fi
 
 if [[ "$EUID" == 0 ]]; then
-  chown -R "$PLUSHU_USER" "$PLUSHU_ROOT/nginx"
-  chown -R "$PLUSHU_USER" "$PLUSHU_ROOT/ssl"
+  chown -R "$PLUSHU_USER:" "$PLUSHU_ROOT/nginx"
+  chown -R "$PLUSHU_USER:" "$PLUSHU_ROOT/ssl"
 fi
 
 docker rm -f plushu-nginx >/dev/null 2>&1 || :
