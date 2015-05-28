@@ -9,18 +9,32 @@ mkdir -p "$PLUSHU_ROOT/ssl"
 
 # If there's no pre-existing nginx.conf
 if [[ ! -f "$PLUSHU_ROOT/nginx/nginx.conf" ]]; then
-  # Make a basic conf that reads from directories
+  # Make a basic conf that reads from the directory for the main block
   cat > "$PLUSHU_ROOT/nginx/nginx.conf" <<EOF
 include main/*.conf;
+EOF
+fi
+
+# Make configs in the main block for reading the other 3 block directories
+if [[ ! -f "$PLUSHU_ROOT/nginx/main/20_events.conf" ]]; then
+  cat > "$PLUSHU_ROOT/nginx/main/20_events.conf" <<EOF
 events { include events/*.conf; }
+EOF
+fi
+if [[ ! -f "$PLUSHU_ROOT/nginx/main/25_http.conf" ]]; then
+  cat > "$PLUSHU_ROOT/nginx/main/25_http.conf" <<EOF
 http { include http/*.conf; }
+EOF
+fi
+if [[ ! -f "$PLUSHU_ROOT/nginx/main/30_mail.conf" ]]; then
+  cat > "$PLUSHU_ROOT/nginx/main/30_mail.conf" <<EOF
 mail { include mail/*.conf; }
 EOF
 fi
 
 # Make sure we disable daemonization - docker wants nginx in the foreground
-if [[ ! -f "$PLUSHU_ROOT/nginx/main/daemon-off.conf" ]]; then
-  cat > "$PLUSHU_ROOT/nginx/main/daemon-off.conf" <<EOF
+if [[ ! -f "$PLUSHU_ROOT/nginx/main/15_daemon-off.conf" ]]; then
+  cat > "$PLUSHU_ROOT/nginx/main/15_daemon-off.conf" <<EOF
 daemon off;
 EOF
 fi
